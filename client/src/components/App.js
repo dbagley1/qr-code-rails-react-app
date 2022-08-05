@@ -5,6 +5,8 @@ import Login from "../pages/Login";
 import QrCodeList from "../pages/QrCodeList";
 import NewQrCode from "../pages/NewQrCode";
 import styled from "styled-components";
+import ProjectList from "../pages/ProjectList";
+import NewProject from "../pages/NewProject";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -27,10 +29,17 @@ function App() {
       </Header>
       <main>
         <Switch>
-          <Route path="/new">
-            <NewQrCode user={user} />
+          <Route path="/" exact>
+            <QrCodeList />
           </Route>
-          <Route path="/">
+          <Route path="/projects">
+            <ProjectList />
+          </Route>
+          <Route path="/new-project">
+            <NewProject user={user} />
+          </Route>
+          <Route path="/new-qr-code">
+            <NewQrCode user={user} />
             <QrCodeList />
           </Route>
         </Switch>
@@ -43,10 +52,9 @@ const Header = styled.header`
   display: flex;
   align-items: center;
   flex-flow: column nowrap;
-  max-width: 800px;
-  margin: 0 auto;
   padding: 20px;
   gap: 20px;
+  background-color: #fff;
 `;
 
 export default App;

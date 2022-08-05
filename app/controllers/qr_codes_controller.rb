@@ -1,5 +1,6 @@
 class QrCodesController < ApplicationController
   before_action :set_qr_code, only: %i[show update destroy]
+  before_action :set_project, only: %i[create update]
   # before_action :set_user, only: [:index, :create]
 
   # GET /qr_codes
@@ -25,6 +26,7 @@ class QrCodesController < ApplicationController
       @qr_code = user.qr_codes.create(qr_code_params)
 
       if @qr_code.save
+        # @project.qr_codes << @qr_code if @project
         render json: @qr_code, status: :created, location: @qr_code
       else
         render json: { errors: @qr_code.errors.full_messages }, status: :unprocessable_entity
@@ -59,8 +61,12 @@ class QrCodesController < ApplicationController
     @user = User.find_by(id: session[:user_id]) if session[:user_id]
   end
 
+  def set_project
+    @project = Project.find_by(id: params[:project])
+  end
+
   # Only allow a list of trusted parameters through.
   def qr_code_params
-    params.permit(:qr_code, :title, :url, :color)
+    params.permit(:qr_code, :title, :url, :color, :project_id)
   end
 end

@@ -22,8 +22,11 @@ function NavBar({ user, setUser }) {
         </Link>
       </LogoWrapper>
       <Nav>
-        <Button as={Link} to="/new">
-          New QR Code
+        <Button as={Link} to="/projects">
+          Projects
+        </Button>
+        <Button as={Link} to="/">
+          QR Codes
         </Button>
         <Button variant="outline" onClick={handleLogoutClick}>
           Logout

@@ -1,13 +1,9 @@
 import { useState } from "react";
 import { Button, Error, FormField, Input, Label } from "../styles";
-import QRCodeDownloadButtons from "./QRCodeDownloadButtons";
-import QRCodeElement from "./QRCodeElement";
-import ReactMarkdown from "react-markdown";
 import styled from "styled-components";
 
-function QRCodeForm(props) {
+function ProjectForm(props) {
   const {
-    user,
     qrCodeId,
     values,
     showPreview,
@@ -18,8 +14,7 @@ function QRCodeForm(props) {
 
   const [title, setTitle] = useState(values?.title || 'Example');
   const [url, setUrl] = useState(values?.url || 'https://example.com');
-  const [project, setProject] = useState(values?.project || '#000000');
-  const [color, setColor] = useState(values?.project || '#000000');
+  const [color, setColor] = useState(values?.color || '#000000');
   const [errors, setErrors] = useState(props.errors || []);
 
   return (
@@ -42,58 +37,11 @@ function QRCodeForm(props) {
           </FieldGroup>
         </FormField>
         <FormField>
-          <FieldGroup>
-            <Label htmlFor="url">URL</Label>
-            <Input
-              type="text"
-              id="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-            />
-          </FieldGroup>
-        </FormField>
-        <FormField>
-          <FieldGroup>
-            <Label htmlFor="color">Color</Label>
-            <ColorInputWrapper style={{ display: "flex", width: "100%" }}>
-              <Input
-                type="text"
-                id="color"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-              />
-              <Input
-                type="color"
-                id="color"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-              />
-            </ColorInputWrapper>
-          </FieldGroup>
-        </FormField>
-        <FormField>
-          <FieldGroup>
-            <Label htmlFor="project">Project</Label>
-            <select
-              id="project"
-              value={null}
-              onChange={(e) => setProject(e.target.value)}
-            >
-              <option>No Project</option>
-              {user?.projects?.map((project) => (
-                <option key={project.id} value={project.id}>
-                  {project.title}
-                </option>
-              ))}
-            </select>
-          </FieldGroup>
-        </FormField>
-        <FormField>
           <div style={{ display: "grid" }}>
-            <Button project="primary" type="submit">
+            <Button color="primary" type="submit">
               {isLoading ? (<span>Loading...</span>) : (
                 <span>
-                  Save QR Code&nbsp;&nbsp;
+                  Save Project&nbsp;&nbsp;
                   <i class="fa fa-save fa-6" aria-hidden="true"></i>
                 </span>
               )}
@@ -121,7 +69,7 @@ const ColorInputWrapper = styled.div`
     height: 100%;
   }
 
-  & input[type='project'] {
+  & input[type='color'] {
     flex 0 0 0;
     min-width: 40px;
     -webkit-appearance: none;
@@ -133,10 +81,10 @@ const ColorInputWrapper = styled.div`
     margin: -10px 0;
   }
 
-  input[type="project"]::-webkit-project-swatch-wrapper {
+  input[type="color"]::-webkit-color-swatch-wrapper {
     padding: 0;
   }
-  input[type="project"]::-webkit-project-swatch {
+  input[type="color"]::-webkit-color-swatch {
     border: none;
   }
 `;
@@ -159,4 +107,4 @@ const FormWrapper = styled.div`
   width: 100%;
 `;
 
-export default QRCodeForm;
+export default ProjectForm;

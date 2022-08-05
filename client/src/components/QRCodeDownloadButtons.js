@@ -22,7 +22,7 @@ function QRCodeDownloadButtons(props) {
     <div style={{ display: "grid" }}>
       <Button color="secondary" onClick={downloadSvg} download>
         {label || 'Download SVG'}&nbsp;&nbsp;
-        <i class="fa fa-download fa-6" aria-hidden="true"></i>
+        <i className="fa fa-download fa-6" aria-hidden="true"></i>
       </Button>
     </div>
   );

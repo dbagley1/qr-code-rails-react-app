@@ -1,52 +1,44 @@
 import { useRef, useState } from "react";
 import { useHistory } from "react-router";
 import styled from "styled-components";
-import ReactMarkdown from "react-markdown";
-import QRCodeElement from "../components/QRCodeElement";
-import QRCodeDownloadButtons from "../components/QRCodeDownloadButtons";
-import QRCodeForm from "../components/QRCodeForm";
+import ProjectForm from "../components/ProjectForm";
 
-function NewQRCode({ user }) {
+function NewProject({ user }) {
   let now = new Date();
   let dateString = now.toLocaleString('en-US', { month: "numeric", day: "numeric" }).replace(/[\s/]/g, '-');
   let timeString = now.toLocaleString('en-US', { hour: "numeric", minute: "numeric" });
 
   const [formData, setFormData] = useState({
-    title: `QR Code ${dateString} ${timeString}`,
+    title: `New Project ${dateString} ${timeString}`,
     url: "https://www.example.com",
   });
-
 
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
-  const qrElement = useRef(null);
 
   function updateFormData(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   }
 
   function handleFormSubmit(e) {
-    let { title, url, color, project } = formData;
+    let { title } = formData;
 
     e.preventDefault();
     setIsLoading(true);
-    fetch("/qr_codes", {
+    fetch("/projects", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         title,
-        url,
-        color,
-        project,
-        project_id: project,
+        user_id: user.id
       }),
     }).then((r) => {
       setIsLoading(false);
       if (r.ok) {
-        history.push("/");
+        history.push("/projects");
       } else {
         r.json().then((err) => setErrors(err.errors));
       }
@@ -56,18 +48,11 @@ function NewQRCode({ user }) {
   return (
     <Wrapper>
       <FormWrapperChild>
-        <h1>Create a QR Code</h1>
-        <QRCodeForm onChange={updateFormData} onSubmit={handleFormSubmit} showPreview={false} values={formData} isLoading={isLoading} user={user} />
-        <div style={{ width: "100%" }}>
-          <QRCodeDownloadButtons svgSelector={"#new-qr-preview-svg svg"} fileName={formData.title} />
-        </div>
+        <h1>Create a Project</h1>
+        <ProjectForm onChange={updateFormData} onSubmit={handleFormSubmit} showPreview={false} values={formData} isLoading={isLoading} />
       </FormWrapperChild>
       <WrapperChild>
         <h2 style={{ overflowWrap: "break-word", maxWidth: "fit-content" }}>{formData.title}</h2>
-        <QRPreviewWrapper>
-          <QRCodeElement url={formData.url} color={formData.color} containerId={"new-qr-preview-svg"} />
-        </QRPreviewWrapper>
-        <ReactMarkdown>{"URL: " + formData.url}</ReactMarkdown>
       </WrapperChild>
     </Wrapper>
   );
@@ -123,4 +108,4 @@ const QRPreviewWrapper = styled.div`
   width: 100%;
 `;
 
-export default NewQRCode;
+export default NewProject;
