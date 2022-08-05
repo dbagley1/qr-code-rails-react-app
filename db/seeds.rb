@@ -5,9 +5,19 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-user = User.create(username: "admin", password: "pass1", password_confirmation: "pass1", bio: "I am the admin", image_url: "http://www.gravatar.com/")
+require "faker"
 
-10.times do |i|
-  qr_code = QrCode.create(title: "Example #{i}", url: "http://example.com")
+user = User.create(username: "Darrian", password: "pass1", password_confirmation: "pass1", bio: "I am the admin", image_url: "http://www.gravatar.com/")
+user2 = User.create(username: "NotDarrian", password: "pass1", password_confirmation: "pass1", bio: "I am the admin", image_url: "http://www.gravatar.com/")
+
+5.times do |i|
+  domain = Faker::Internet.domain_name
+  qr_code = QrCode.create(title: "#{domain}", url: "http://#{domain}")
   user.qr_codes << qr_code
+end
+
+5.times do |i|
+  domain = Faker::Internet.domain_name
+  qr_code = QrCode.create(title: "#{domain}", url: "http://#{domain}")
+  user2.qr_codes << qr_code
 end

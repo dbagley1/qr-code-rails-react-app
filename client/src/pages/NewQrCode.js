@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import { useHistory } from "react-router";
 import styled from "styled-components";
 import ReactMarkdown from "react-markdown";
-import { Button, Error, FormField, Input, Label, Textarea } from "../styles";
 import QRCodeElement from "../components/QRCodeElement";
 import QRCodeDownloadButtons from "../components/QRCodeDownloadButtons";
 import QRCodeForm from "../components/QRCodeForm";
@@ -28,7 +27,7 @@ function NewQRCode({ user }) {
   }
 
   function handleFormSubmit(e) {
-    let { title, url } = formData;
+    let { title, url, color } = formData;
 
     e.preventDefault();
     setIsLoading(true);
@@ -39,7 +38,8 @@ function NewQRCode({ user }) {
       },
       body: JSON.stringify({
         title,
-        url
+        url,
+        color
       }),
     }).then((r) => {
       setIsLoading(false);
@@ -53,31 +53,72 @@ function NewQRCode({ user }) {
 
   return (
     <Wrapper>
-      <WrapperChild>
-        <h2>Create a QR Code</h2>
+      <FormWrapperChild>
+        <h1>Create a QR Code</h1>
         <QRCodeForm onChange={updateFormData} onSubmit={handleFormSubmit} showPreview={false} values={formData} isLoading={isLoading} />
-      </WrapperChild>
+        <div style={{ width: "100%" }}>
+          <QRCodeDownloadButtons svgSelector={"#new-qr-preview-svg svg"} fileName={formData.title} />
+        </div>
+      </FormWrapperChild>
       <WrapperChild>
-        {JSON.stringify(formData)}
-        <h1>{formData.title}</h1>
-        <ReactMarkdown>{formData.url}</ReactMarkdown>
-        <QRCodeElement data={formData.url} containerId={"new-qr-preview-svg"} />
-        <QRCodeDownloadButtons svgSelector={"#new-qr-preview-svg svg"} fileName={formData.title} />
+        <h2 style={{ overflowWrap: "break-word", maxWidth: "fit-content" }}>{formData.title}</h2>
+        <QRPreviewWrapper>
+          <QRCodeElement url={formData.url} color={formData.color} containerId={"new-qr-preview-svg"} />
+        </QRPreviewWrapper>
+        <ReactMarkdown>{"URL: " + formData.url}</ReactMarkdown>
       </WrapperChild>
     </Wrapper>
   );
 }
 
 const Wrapper = styled.section`
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
   display: flex;
   gap: 24px;
+  flex-flow: row wrap;
+
+  @media (max-width: 768px) {
+    max-width: 450px;
+    flex-flow: column nowrap;
+    gap: 0;
+  }
 `;
 
 const WrapperChild = styled.div`
-  flex: 1;
+  flex: 0 0 auto;
+  
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+
+  @media (max-width: 768px) {
+    flex-flow: column nowrap;
+  }
+`;
+
+const FormWrapperChild = styled.div`
+  flex: 1 0 auto;
+  
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+
+  @media (max-width: 768px) {
+    flex-flow: column nowrap;
+  }
+`;
+
+const QRPreviewWrapper = styled.div`
+  max-width: 250px;
+  width: 100%;
 `;
 
 export default NewQRCode;

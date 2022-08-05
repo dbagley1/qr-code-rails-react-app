@@ -2,22 +2,26 @@ import QRCode from "qrcode-svg";
 import { useEffect, useState } from "react";
 
 function QRCodeElement(props) {
-  const { data } = props;
+  const { url, size, color, containerId } = props;
   const [svg, setSvg] = useState(null);
 
   useEffect(() => {
-    if (data && data.length > 0) {
+    if (url && url.length > 0) {
       setSvg(new QRCode({
-        content: data,
+        content: url,
+        color: color || '#000000',
         join: true,
         padding: 0,
+        width: size || 200,
+        height: size || 200,
+        container: "svg-viewbox",
       }).svg());
     }
-  }, [data]);
+  }, [url, color, size]);
 
   return (
     <div dangerouslySetInnerHTML={{ __html: svg }}
-      id={props.containerId} />
+      id={containerId} />
   );
 }
 

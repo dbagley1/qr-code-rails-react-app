@@ -14,26 +14,49 @@ function NavBar({ user, setUser }) {
 
   return (
     <Wrapper>
-      <Logo>
-        <Link to="/">QR Code Manager</Link>
-      </Logo>
+      <LogoWrapper>
+        <Link to="/">
+          <Logo>
+            QR Code Manager
+          </Logo>
+        </Link>
+      </LogoWrapper>
       <Nav>
         <Button as={Link} to="/new">
-          New Recipe
+          New QR Code
         </Button>
         <Button variant="outline" onClick={handleLogoutClick}>
           Logout
         </Button>
       </Nav>
+      <AccountBar>
+        <p>
+          Logged in as&nbsp;
+          <span style={{ fontWeight: "bold", color: "var(--g-blue)" }}>{user.username}</span>.
+          Not you?&nbsp;
+          <span style={{ cursor: "pointer", color: "var(--g-blue-dark)", textDecoration: "underline" }} onClick={handleLogoutClick}>
+            Logout
+          </span>
+        </p>
+      </AccountBar>
     </Wrapper>
   );
 }
 
-const Wrapper = styled.header`
+const Wrapper = styled.div`
   display: flex;
-  justify-content: center;
+  flex-flow: row wrap;
   align-items: center;
-  padding: 8px;
+  justify-content: space-between;
+
+  @media (max-width: 768px) {
+    flex-flow: column;
+    gap: 10px;
+    & > * {
+      width: 100%;
+      text-align: center;
+    }
+  }
 `;
 
 const Logo = styled.h1`
@@ -42,6 +65,7 @@ const Logo = styled.h1`
   font-weight: 600;
   margin: 0;
   line-height: 1;
+  color: var(--g-blue-dark);
 
   a {
     color: inherit;
@@ -49,11 +73,18 @@ const Logo = styled.h1`
   }
 `;
 
+const LogoWrapper = styled.div`
+
+`;
+
 const Nav = styled.nav`
   display: flex;
-  gap: 4px;
-  position: absolute;
-  right: 8px;
+  justify-content: center;
+  gap: 10px;
+`;
+
+const AccountBar = styled.div`
+  width: 100%;
 `;
 
 export default NavBar;
