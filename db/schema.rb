@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_30_160809) do
+ActiveRecord::Schema[6.1].define(version: 2022_07_30_160809) do
 
   create_table "qr_codes", force: :cascade do |t|
     t.string "title"

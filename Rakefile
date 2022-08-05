@@ -5,6 +5,6 @@ require_relative "config/application"
 
 Rails.application.load_tasks
 
-task :test do
+task :client do
   sh "npm start --prefix #{Rails.root}/client"
 end
