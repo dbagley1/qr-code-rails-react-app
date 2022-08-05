@@ -16,7 +16,8 @@ function QRCodeElement(props) {
   }, [data]);
 
   return (
-    <div dangerouslySetInnerHTML={{ __html: svg }} />
+    <div dangerouslySetInnerHTML={{ __html: svg }}
+      id={props.containerId} />
   );
 }
 

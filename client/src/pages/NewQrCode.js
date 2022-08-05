@@ -1,20 +1,35 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useHistory } from "react-router";
 import styled from "styled-components";
 import ReactMarkdown from "react-markdown";
 import { Button, Error, FormField, Input, Label, Textarea } from "../styles";
 import QRCodeElement from "../components/QRCodeElement";
 import QRCodeDownloadButtons from "../components/QRCodeDownloadButtons";
+import QRCodeForm from "../components/QRCodeForm";
 
-function NewRecipe({ user }) {
-  const [title, setTitle] = useState("Untitled QR Code");
-  const [url, setUrl] = useState('https://www.example.com/');
+function NewQRCode({ user }) {
+  let now = new Date();
+  let dateString = now.toLocaleString('en-US', { month: "numeric", day: "numeric" }).replace(/[\s/]/g, '-');
+  let timeString = now.toLocaleString('en-US', { hour: "numeric", minute: "numeric" });
+
+  const [formData, setFormData] = useState({
+    title: `QR Code ${dateString} ${timeString}`,
+    url: "https://www.example.com",
+  });
+
 
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
+  const qrElement = useRef(null);
 
-  function handleSubmit(e) {
+  function updateFormData(e) {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  }
+
+  function handleFormSubmit(e) {
+    let { title, url } = formData;
+
     e.preventDefault();
     setIsLoading(true);
     fetch("/qr_codes", {
@@ -24,7 +39,7 @@ function NewRecipe({ user }) {
       },
       body: JSON.stringify({
         title,
-        url,
+        url
       }),
     }).then((r) => {
       setIsLoading(false);
@@ -40,42 +55,14 @@ function NewRecipe({ user }) {
     <Wrapper>
       <WrapperChild>
         <h2>Create a QR Code</h2>
-        <form onSubmit={handleSubmit}>
-          <FormField>
-            <Label htmlFor="title">Title</Label>
-            <Input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </FormField>
-          <FormField>
-            <Label htmlFor="url">URL</Label>
-            <Input
-              type="text"
-              id="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-            />
-          </FormField>
-          <FormField>
-            <Button color="primary" type="submit">
-              {isLoading ? "Loading..." : "Save QR Code"}
-            </Button>
-          </FormField>
-          <FormField>
-            {errors.map((err) => (
-              <Error key={err}>{err}</Error>
-            ))}
-          </FormField>
-        </form>
+        <QRCodeForm onChange={updateFormData} onSubmit={handleFormSubmit} showPreview={false} values={formData} isLoading={isLoading} />
       </WrapperChild>
       <WrapperChild>
-        <h1>{title}</h1>
-        <QRCodeElement data={url} />
-        <ReactMarkdown>{url}</ReactMarkdown>
-        <QRCodeDownloadButtons data={url} />
+        {JSON.stringify(formData)}
+        <h1>{formData.title}</h1>
+        <ReactMarkdown>{formData.url}</ReactMarkdown>
+        <QRCodeElement data={formData.url} containerId={"new-qr-preview-svg"} />
+        <QRCodeDownloadButtons svgSelector={"#new-qr-preview-svg svg"} fileName={formData.title} />
       </WrapperChild>
     </Wrapper>
   );
@@ -93,4 +80,4 @@ const WrapperChild = styled.div`
   flex: 1;
 `;
 
-export default NewRecipe;
+export default NewQRCode;

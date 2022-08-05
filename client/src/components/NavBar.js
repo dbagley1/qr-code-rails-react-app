@@ -37,9 +37,9 @@ const Wrapper = styled.header`
 `;
 
 const Logo = styled.h1`
-  font-family: Inter, Roboto, sans-serif;
-  font-size: 3rem;
-  color: #4102ff;
+  font-family: Poppins, Inter, Roboto, sans-serif;
+  font-size: 2.25rem;
+  font-weight: 600;
   margin: 0;
   line-height: 1;
 

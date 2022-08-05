@@ -6,7 +6,7 @@ class QrCodesController < ApplicationController
   def index
     user = User.find_by(id: session[:user_id])
     if user
-      qr_codes = QrCode.all
+      qr_codes = user.qr_codes
       render json: qr_codes
     else
       render json: { errors: ["You must be logged in."] }, status: 401
@@ -61,6 +61,6 @@ class QrCodesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def qr_code_params
-    params.permit(:qr_code, :title, :instructions, :minutes_to_complete)
+    params.permit(:qr_code, :title, :url)
   end
 end
