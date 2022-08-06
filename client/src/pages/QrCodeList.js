@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Button } from "../styles";
 import QRCodeListCards from "../components/QRCodeListCards";
 
-function QrCodeList() {
+function QrCodeList({ user }) {
   const [qrCodes, setQrCodes] = useState([]);
 
   useEffect(() => {
@@ -14,12 +14,14 @@ function QrCodeList() {
   }, []);
 
   return (
-    <Wrapper>
-      <Button as={Link} to="/new-qr-code">
-        Create New QR Code
-      </Button>
-      <QRCodeListCards qrCodes={qrCodes} />
-    </Wrapper>
+    <Background>
+      <Wrapper>
+        <Button as={Link} to="/new-qr-code">
+          Create New QR Code
+        </Button>
+        <QRCodeListCards qrCodes={qrCodes} user={user} />
+      </Wrapper>
+    </Background>
   );
 }
 
@@ -36,5 +38,12 @@ const Wrapper = styled.section`
     0 0 0 1px rgb(10 10 10 / 2%);
   }
 `;
+
+const Background = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: var(--g-paleblue);
+  position: relative;
+  `;
 
 export default QrCodeList;

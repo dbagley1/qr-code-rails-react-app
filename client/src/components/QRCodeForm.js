@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { Button, Error, FormField, Input, Label } from "../styles";
-import QRCodeDownloadButtons from "./QRCodeDownloadButtons";
-import QRCodeElement from "./QRCodeElement";
-import ReactMarkdown from "react-markdown";
 import styled from "styled-components";
+import { useEffect } from "react";
 
 function QRCodeForm(props) {
   const {
     user,
     qrCodeId,
     values,
-    showPreview,
     onSubmit,
     onChange,
     isLoading
@@ -18,9 +15,13 @@ function QRCodeForm(props) {
 
   const [title, setTitle] = useState(values?.title || 'Example');
   const [url, setUrl] = useState(values?.url || 'https://example.com');
-  const [project, setProject] = useState(values?.project || '#000000');
-  const [color, setColor] = useState(values?.project || '#000000');
+  const [project_id, setProjectId] = useState(values?.project?.id || 'null');
+  const [color, setColor] = useState(values?.color || '#000000');
   const [errors, setErrors] = useState(props.errors || []);
+
+  useEffect(() => {
+    setErrors(props.errors || []);
+  }, [props.errors]);
 
   return (
     <FormWrapper>
@@ -73,13 +74,13 @@ function QRCodeForm(props) {
         </FormField>
         <FormField>
           <FieldGroup>
-            <Label htmlFor="project">Project</Label>
+            <Label htmlFor="project_id">Project</Label>
             <select
-              id="project"
-              value={null}
-              onChange={(e) => setProject(e.target.value)}
+              id="project_id"
+              value={project_id}
+              onChange={(e) => setProjectId(e.target.value)}
             >
-              <option>No Project</option>
+              <option value="null">No Project</option>
               {user?.projects?.map((project) => (
                 <option key={project.id} value={project.id}>
                   {project.title}
@@ -94,7 +95,7 @@ function QRCodeForm(props) {
               {isLoading ? (<span>Loading...</span>) : (
                 <span>
                   Save QR Code&nbsp;&nbsp;
-                  <i class="fa fa-save fa-6" aria-hidden="true"></i>
+                  <i className="fa fa-save fa-6" aria-hidden="true"></i>
                 </span>
               )}
             </Button>

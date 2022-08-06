@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useHistory } from "react-router";
 import styled from "styled-components";
 import ReactMarkdown from "react-markdown";
@@ -20,14 +20,13 @@ function NewQRCode({ user }) {
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
-  const qrElement = useRef(null);
 
   function updateFormData(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   }
 
   function handleFormSubmit(e) {
-    let { title, url, color, project } = formData;
+    let { title, url, color, project_id } = formData;
 
     e.preventDefault();
     setIsLoading(true);
@@ -40,8 +39,7 @@ function NewQRCode({ user }) {
         title,
         url,
         color,
-        project,
-        project_id: project,
+        project_id
       }),
     }).then((r) => {
       setIsLoading(false);
@@ -50,14 +48,17 @@ function NewQRCode({ user }) {
       } else {
         r.json().then((err) => setErrors(err.errors));
       }
-    });
+    })
+      .catch((err) => {
+        setErrors(err.errors);
+      });
   }
 
   return (
     <Wrapper>
       <FormWrapperChild>
         <h1>Create a QR Code</h1>
-        <QRCodeForm onChange={updateFormData} onSubmit={handleFormSubmit} showPreview={false} values={formData} isLoading={isLoading} user={user} />
+        <QRCodeForm onChange={updateFormData} onSubmit={handleFormSubmit} showPreview={false} values={formData} isLoading={isLoading} user={user} errors={errors} />
         <div style={{ width: "100%" }}>
           <QRCodeDownloadButtons svgSelector={"#new-qr-preview-svg svg"} fileName={formData.title} />
         </div>

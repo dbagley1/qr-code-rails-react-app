@@ -27,23 +27,23 @@ function App() {
       <Header>
         <NavBar user={user} setUser={setUser} />
       </Header>
-      <main>
+      <Main>
         <Switch>
           <Route path="/" exact>
-            <QrCodeList />
+            <QrCodeList user={user} />
           </Route>
           <Route path="/projects">
-            <ProjectList />
+            <ProjectList user={user} />
           </Route>
           <Route path="/new-project">
             <NewProject user={user} />
           </Route>
           <Route path="/new-qr-code">
             <NewQrCode user={user} />
-            <QrCodeList />
+            <QrCodeList user={user} />
           </Route>
         </Switch>
-      </main>
+      </Main>
     </>
   );
 }
@@ -56,5 +56,10 @@ const Header = styled.header`
   gap: 20px;
   background-color: #fff;
 `;
+
+const Main = styled.div`
+  height: 100%;
+  width: 100%;
+  `;
 
 export default App;

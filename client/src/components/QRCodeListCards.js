@@ -7,6 +7,8 @@ import QRCodeElement from "./QRCodeElement";
 import QRCodeForm from "./QRCodeForm";
 
 function QRCodeListCards(props) {
+  const { user } = props;
+  const editCallback = props.editCallback || (() => { });
   const [qrCodes, setQrCodes] = useState(props.qrCodes);
 
   useEffect(() => {
@@ -36,8 +38,8 @@ function QRCodeListCards(props) {
   }
 
   function editQrCode(qrCode) {
-    setEditId(qrCode.id);
     setFormData({ ...qrCode });
+    setEditId(qrCode.id);
   }
 
   function updateFormData(e) {
@@ -58,6 +60,7 @@ function QRCodeListCards(props) {
       .then(data => {
         setQrCodes(qrCodes.map(qrCode => qrCode.id === editId ? data : qrCode));
         setEditId(null);
+        editCallback();
       })
       .catch(error => {
         console.log(error);
@@ -92,7 +95,7 @@ function QRCodeListCards(props) {
                   <QRCodeElement url={formData.url || qrCode.url} color={formData.color || qrCode.color} title={formData.title || qrCode.title} />
                 </SVGContainer>
                 <QRDetails>
-                  <QRCodeForm onChange={updateFormData} onSubmit={handleEditSubmit} showPreview={false} values={formData} />
+                  <QRCodeForm onChange={updateFormData} onSubmit={handleEditSubmit} showPreview={false} values={formData} user={user} />
                   <div>
                     <QRItemButtonGroup>
                       <QRItemButton onClick={() => closeEditForm()}>Cancel</QRItemButton>

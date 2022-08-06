@@ -1,9 +1,6 @@
 class UserSerializer < ActiveModel::Serializer
-  attributes :id, :username, :image_url, :bio, :qr_codes
+  attributes :id, :username, :image_url, :bio
 
   has_many :projects
-
-  def qr_codes
-    self.object.qr_codes.concat(self.object.shared_qr_codes)
-  end
+  has_many :qr_codes
 end

@@ -7,20 +7,20 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 require "faker"
 
-user = User.create(username: "Darrian", password: "pass1", password_confirmation: "pass1", bio: "I am the admin", image_url: "http://www.gravatar.com/")
-user2 = User.create(username: "NotDarrian", password: "pass1", password_confirmation: "pass1", bio: "I am the admin", image_url: "http://www.gravatar.com/")
+qr_count = 5
 
-user.projects.create(title: Faker::Marketing.buzzwords.titleize, owner_id: user.id)
-5.times do |i|
-  domain = Faker::Internet.domain_name
-  qr_code = user.qr_codes.create(title: "#{domain}", url: "http://#{domain}")
-end
-user.projects.first.qr_codes << user.qr_codes.last
+User.create(username: "ad", password: "p1", password_confirmation: "p1", bio: "I am the admin", image_url: Faker::Avatar.image)
+user = User.create(username: "Darrian", password: "pass1", password_confirmation: "pass1", bio: "I am the admin", image_url: Faker::Avatar.image)
+user2 = User.create(username: "NotDarrian", password: "pass1", password_confirmation: "pass1", bio: "I am the admin", image_url: Faker::Avatar.image)
 
-project2 = user2.projects.create(title: Faker::Marketing.buzzwords.titleize, owner_id: user2.id)
-5.times do |i|
-  domain = Faker::Internet.domain_name
-  qr_code = user2.qr_codes.create(title: "#{domain}", url: "http://#{domain}")
-end
-user2.projects.first.qr_codes << user2.qr_codes.last
-user2.projects.first.users << user
+domains = 10.times.map { Faker::Internet.domain_name }
+qr_count.times { |i| qr_code = user.qr_codes.create(title: "#{domains[i]}", url: "http://#{domains[i]}") }
+
+proj = user.projects.create(title: Faker::Marketing.buzzwords.titleize)
+proj.qr_codes << user.qr_codes.slice(qr_count - 2, qr_count - 1)
+
+qr_count.times { |i| qr_code = user2.qr_codes.create(title: "#{domains[qr_count + i]}", url: "http://#{domains[qr_count + i]}") }
+
+proj2 = user2.projects.create(title: Faker::Marketing.buzzwords.titleize)
+proj2.qr_codes << user2.qr_codes.slice(0, 2)
+proj2.users << user

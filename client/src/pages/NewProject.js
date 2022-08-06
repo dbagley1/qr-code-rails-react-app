@@ -42,6 +42,8 @@ function NewProject({ user }) {
       } else {
         r.json().then((err) => setErrors(err.errors));
       }
+    }).catch((err) => {
+      setErrors(err.errors);
     });
   }
 
@@ -49,11 +51,8 @@ function NewProject({ user }) {
     <Wrapper>
       <FormWrapperChild>
         <h1>Create a Project</h1>
-        <ProjectForm onChange={updateFormData} onSubmit={handleFormSubmit} showPreview={false} values={formData} isLoading={isLoading} />
+        <ProjectForm onChange={updateFormData} onSubmit={handleFormSubmit} values={formData} isLoading={isLoading} errors={errors} />
       </FormWrapperChild>
-      <WrapperChild>
-        <h2 style={{ overflowWrap: "break-word", maxWidth: "fit-content" }}>{formData.title}</h2>
-      </WrapperChild>
     </Wrapper>
   );
 }

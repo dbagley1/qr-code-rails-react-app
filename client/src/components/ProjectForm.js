@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Error, FormField, Input, Label } from "../styles";
 import styled from "styled-components";
 
@@ -6,16 +6,17 @@ function ProjectForm(props) {
   const {
     qrCodeId,
     values,
-    showPreview,
     onSubmit,
     onChange,
     isLoading
   } = props;
 
   const [title, setTitle] = useState(values?.title || 'Example');
-  const [url, setUrl] = useState(values?.url || 'https://example.com');
-  const [color, setColor] = useState(values?.color || '#000000');
   const [errors, setErrors] = useState(props.errors || []);
+
+  useEffect(() => {
+    setErrors(props.errors || []);
+  }, [props.errors]);
 
   return (
     <FormWrapper>
@@ -42,7 +43,7 @@ function ProjectForm(props) {
               {isLoading ? (<span>Loading...</span>) : (
                 <span>
                   Save Project&nbsp;&nbsp;
-                  <i class="fa fa-save fa-6" aria-hidden="true"></i>
+                  <i className="fa fa-save fa-6" aria-hidden="true"></i>
                 </span>
               )}
             </Button>
@@ -57,37 +58,6 @@ function ProjectForm(props) {
     </FormWrapper>
   );
 }
-
-const ColorInputWrapper = styled.div`
-  display: flex;
-  flex-direction: row nowrap;
-  align-items: center;
-
-  & input {
-    flex: 1;
-    margin: 0;
-    height: 100%;
-  }
-
-  & input[type='color'] {
-    flex 0 0 0;
-    min-width: 40px;
-    -webkit-appearance: none;
-    cursor: pointer;
-    aspect-ratio: 1;
-    padding: 0;
-    border: none;
-    background: none;
-    margin: -10px 0;
-  }
-
-  input[type="color"]::-webkit-color-swatch-wrapper {
-    padding: 0;
-  }
-  input[type="color"]::-webkit-color-swatch {
-    border: none;
-  }
-`;
 
 const FieldGroup = styled.div`
   display: flex;
