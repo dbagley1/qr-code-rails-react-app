@@ -61,6 +61,7 @@ function QRCodeForm(props) {
                 type="text"
                 id="color"
                 value={color}
+                placeholder="#000000"
                 onChange={(e) => setColor(e.target.value)}
               />
               <Input
@@ -80,7 +81,7 @@ function QRCodeForm(props) {
               value={project_id}
               onChange={(e) => setProjectId(e.target.value)}
             >
-              <option value="null">No Project</option>
+              <option value="null">--Select a Project--</option>
               {user?.projects?.map((project) => (
                 <option key={project.id} value={project.id}>
                   {project.title}

@@ -84,7 +84,7 @@ function QRCodeListCards(props) {
                   <p>{new Date(qrCode.created_at).toLocaleString('en-US', { month: "short", day: "2-digit", hour: "numeric", minute: "numeric" })}</p>
                 </div>
                 <QRItemButtonGroup>
-                  <QRItemButton onClick={() => deleteQrCode(qrCode)}>Delete</QRItemButton>
+                  <QRItemButton onClick={() => deleteQrCode(qrCode)} style={{ color: 'red' }}>Delete</QRItemButton>
                   <QRItemButton onClick={() => editQrCode(qrCode)}>Edit</QRItemButton>
                   <QRCodeDownloadButtons svgSelector={'#qr-svg-' + qrCode.id + ' svg'} label={'SVG'} fileName={qrCode.title} />
                 </QRItemButtonGroup>
@@ -99,7 +99,8 @@ function QRCodeListCards(props) {
                   <div>
                     <QRItemButtonGroup>
                       <QRItemButton onClick={() => closeEditForm()}>Cancel</QRItemButton>
-                      <QRItemButton onClick={() => deleteQrCode(qrCode)}>Delete</QRItemButton>
+                      <QRItemButton onClick={() => deleteQrCode(qrCode)} style={{ color: 'red' }}>
+                        <i className="fas fa-trash-alt" />Delete</QRItemButton>
                     </QRItemButtonGroup>
                   </div>
                 </QRDetails>
@@ -136,6 +137,10 @@ const QRCodeItem = styled.div`
 `;
 
 const QRItemButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+
   span {
     display: none;
   }
