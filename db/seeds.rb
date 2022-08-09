@@ -9,13 +9,14 @@ require "faker"
 
 qr_count = 5
 usernames = %w[DarrianB JohnD JaneD ShelbyT DeshB]
+displaynames = ["Darrian Bagley", "John Doe", "Jane Doe", "", ""]
 colors = %w[4285f4 5AAA95 F47543 7842F5]
 
 usernames.each_with_index do |username, i|
   bgColor = colors[i % colors.length]
   initials = "#{username.first}#{username.last}"
   img_url = "https://ui-avatars.com/api/?background=#{bgColor}&color=fff&name=#{initials}"
-  User.create(username: username, password: "pass1", image_url: img_url)
+  User.create(username: username, password: "pass1", image_url: img_url, display_name: displaynames[i])
 end
 
 user = User.first

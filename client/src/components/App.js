@@ -7,6 +7,7 @@ import NewQrCode from "../pages/NewQrCode";
 import styled from "styled-components";
 import ProjectList from "../pages/ProjectList";
 import NewProject from "../pages/NewProject";
+import Profile from "../pages/Profile";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -22,28 +23,37 @@ function App() {
 
   if (!user) return <Login onLogin={setUser} />;
 
+  function updateUserCallback(user) {
+    setUser(user);
+  }
+
   return (
     <>
-      <Header>
-        <NavBar user={user} setUser={setUser} />
-      </Header>
-      <Main>
-        <Switch>
-          <Route path="/" exact>
-            <QrCodeList user={user} />
-          </Route>
-          <Route path="/projects">
-            <ProjectList user={user} />
-          </Route>
-          <Route path="/new-project">
-            <NewProject user={user} />
-          </Route>
-          <Route path="/new-qr-code">
-            <NewQrCode user={user} />
-            <QrCodeList user={user} />
-          </Route>
-        </Switch>
-      </Main>
+      <AppWrapper>
+        <Header>
+          <NavBar user={user} setUser={setUser} />
+        </Header>
+        <Main>
+          <Switch>
+            <Route path="/" exact>
+              <QrCodeList user={user} />
+            </Route>
+            <Route path="/projects">
+              <ProjectList user={user} />
+            </Route>
+            <Route path="/new-project">
+              <NewProject user={user} />
+            </Route>
+            <Route path="/new-qr-code">
+              <NewQrCode user={user} />
+              <QrCodeList user={user} />
+            </Route>
+            <Route path="/profile">
+              <Profile user={user} updateUserCallback={updateUserCallback} />
+            </Route>
+          </Switch>
+        </Main>
+      </AppWrapper>
     </>
   );
 }
@@ -60,6 +70,14 @@ const Header = styled.header`
 const Main = styled.div`
   height: 100%;
   width: 100%;
+  `;
+
+const AppWrapper = styled.div`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
   `;
 
 export default App;

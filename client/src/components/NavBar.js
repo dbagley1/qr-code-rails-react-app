@@ -31,6 +31,11 @@ function NavBar({ user, setUser }) {
         <Button variant="outline" onClick={handleLogoutClick}>
           Logout
         </Button>
+        <div style={{
+          aspectRatio: "1", borderRadius: "50%", height: "42px", overflow: "hidden"
+        }}>
+          <Link to="/profile"><img src={user.image_url} alt="profile" style={{ width: "100%" }} /></Link>
+        </div>
       </Nav>
       <AccountBar>
         <p>

@@ -4,10 +4,12 @@ Rails.application.routes.draw do
 
   post "/signup", to: "users#create"
   get "/me", to: "users#show"
+  patch "/users", to: "users#update"
 
   resources :qr_codes
 
   resources :projects
+
   delete "/projects/:id/leave", to: "projects#leave"
   post "/projects/:id/users/:username", to: "projects#add_user"
   delete "/projects/:id/users/:user_id", to: "projects#remove_user"

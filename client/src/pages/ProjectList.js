@@ -113,7 +113,6 @@ function ProjectList({ user }) {
   }
 
   function updateProjectCallback(project) {
-    // setAddUsersId(null);
     setProjects(projects.map(p => p.id === project.id ? project : p));
   }
 
@@ -130,10 +129,10 @@ function ProjectList({ user }) {
             <ProjectItem key={project.id}>
               <div>
                 {
-                  project.users.map(user => (
+                  project.owners.map(user => (
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <OwnerAvatar src={user.image_url} alt="" />
-                      <span style={{ fontSize: "1.2rem", fontWeight: "bold", color: "var(--g-blue)" }}>{user.username}</span>
+                      <span style={{ fontSize: "1rem", color: "var(--g-blue)" }}>{user.display_name || user.username}</span>
                     </div>
                   ))
                 }
@@ -215,7 +214,8 @@ const Wrapper = styled.section`
 `;
 
 const ProjectItem = styled.div`
-  padding: 10px;
+  padding: 15px;
+  gap: 10px;
   border-radius: 6px;
   background: white;
 
@@ -250,6 +250,7 @@ const ProjectDetails = styled.div`
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-evenly;
+  margin-top: 10px;
 
   @media only screen and (max-width: 500px) {
     text-align: center;
@@ -265,8 +266,8 @@ const ProjectItemButtonGroup = styled.div`
 
 const OwnerAvatar = styled.img`
   display: inline;
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   margin-right: 5px;
 `;

@@ -126,10 +126,10 @@ class ProjectsController < ApplicationController
                   render json: project_user.errors, status: :unprocessable_entity
                 end
               else
-                render json: { errors: "A project must have at least one owner" }, status: :unprocessable_entity
+                render json: { errors: ["A project must have at least one owner"] }, status: :unprocessable_entity
               end
             else
-              render json: { errors: "User is not an owner on this project" }, status: :unprocessable_entity
+              render json: { errors: ["User is not an owner on this project"] }, status: :unprocessable_entity
             end
           end
         else

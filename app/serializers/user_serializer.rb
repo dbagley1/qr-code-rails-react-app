@@ -1,5 +1,5 @@
 class UserSerializer < ActiveModel::Serializer
-  attributes :id, :username, :image_url, :bio, :owned_projects
+  attributes :id, :username, :display_name, :image_url, :owned_projects
 
   has_many :projects
   has_many :qr_codes
