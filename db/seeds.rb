@@ -8,10 +8,18 @@
 require "faker"
 
 qr_count = 5
+usernames = %w[DarrianB JohnD JaneD ShelbyT DeshB]
+colors = %w[4285f4 5AAA95 F47543 7842F5]
 
-User.create(username: "ad", password: "p1", password_confirmation: "p1", bio: "I am the admin", image_url: Faker::Avatar.image)
-user = User.create(username: "Darrian", password: "pass1", password_confirmation: "pass1", bio: "I am the admin", image_url: Faker::Avatar.image)
-user2 = User.create(username: "NotDarrian", password: "pass1", password_confirmation: "pass1", bio: "I am the admin", image_url: Faker::Avatar.image)
+usernames.each_with_index do |username, i|
+  bgColor = colors[i % colors.length]
+  initials = "#{username.first}#{username.last}"
+  img_url = "https://ui-avatars.com/api/?background=#{bgColor}&color=fff&name=#{initials}"
+  User.create(username: username, password: "pass1", image_url: img_url)
+end
+
+user = User.first
+user2 = User.second
 
 domains = 10.times.map { Faker::Internet.domain_name }
 qr_count.times { |i| qr_code = user.qr_codes.create(title: "#{domains[i]}", url: "http://#{domains[i]}") }

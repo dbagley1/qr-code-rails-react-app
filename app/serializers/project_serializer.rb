@@ -3,5 +3,5 @@ class ProjectSerializer < ActiveModel::Serializer
 
   has_many :users
   has_many :qr_codes
-  has_one :owner
+  has_many :owners
 end

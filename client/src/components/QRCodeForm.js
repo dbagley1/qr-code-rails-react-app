@@ -38,6 +38,7 @@ function QRCodeForm(props) {
               type="text"
               id="title"
               value={title}
+              required
               onChange={(e) => setTitle(e.target.value)}
             />
           </FieldGroup>
@@ -49,6 +50,7 @@ function QRCodeForm(props) {
               type="text"
               id="url"
               value={url}
+              required
               onChange={(e) => setUrl(e.target.value)}
             />
           </FieldGroup>
@@ -123,7 +125,7 @@ const ColorInputWrapper = styled.div`
     height: 100%;
   }
 
-  & input[type='project'] {
+  & input[type="color"] {
     flex 0 0 0;
     min-width: 40px;
     -webkit-appearance: none;
@@ -135,10 +137,10 @@ const ColorInputWrapper = styled.div`
     margin: -10px 0;
   }
 
-  input[type="project"]::-webkit-project-swatch-wrapper {
+  input[type="color"]::-webkit-color-swatch-wrapper {
     padding: 0;
   }
-  input[type="project"]::-webkit-project-swatch {
+  input[type="color"]::-webkit-color-swatch {
     border: none;
   }
 `;

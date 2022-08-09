@@ -13,6 +13,7 @@ function ProjectList({ user }) {
   const [reload, setReload] = useState(false);
   const [expandProjects, setExpandProjects] = useState([]);
   const [addUsersId, setAddUsersId] = useState(null);
+  const [errors, setErrors] = useState([]);
 
   function deleteProject(project) {
     const { id, title } = project;
@@ -56,12 +57,19 @@ function ProjectList({ user }) {
       },
       body: JSON.stringify(formData)
     })
-      .then(response => response.json())
-      .then(data => {
-        setProjects(projects.map(project => project.id === editId ? data : project));
-        setEditId(null);
-      })
-      .catch(error => {
+      .then(response => {
+        if (response.ok) {
+          response.json().then(data => {
+            setProjects(projects.map(project => project.id === editId ? data : project));
+            setEditId(null);
+            setErrors([]);
+          });
+        } else {
+          response.json().then(data => {
+            setErrors(data.errors);
+          });
+        }
+      }).catch(error => {
         console.log(error);
       });
   }
@@ -69,6 +77,7 @@ function ProjectList({ user }) {
   function closeEditForm() {
     setEditId(null);
     setFormData({});
+    setErrors([]);
   }
 
   function qrCodeEditCallback(data) {
@@ -95,8 +104,17 @@ function ProjectList({ user }) {
     setExpandProjects(expandProjects.includes(id) ? expandProjects.filter(project => project !== id) : [...expandProjects, id]);
   }
 
-  function showAddUsers(project) {
-    setAddUsersId(project.id);
+  function toggleShowAddUsers(project) {
+    if (addUsersId === project.id) {
+      setAddUsersId(null);
+    } else {
+      setAddUsersId(project.id);
+    }
+  }
+
+  function updateProjectCallback(project) {
+    // setAddUsersId(null);
+    setProjects(projects.map(p => p.id === project.id ? project : p));
   }
 
   return (
@@ -114,8 +132,8 @@ function ProjectList({ user }) {
                 {
                   project.users.map(user => (
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <span style={{ fontSize: "1.2rem", fontWeight: "bold", color: "var(--g-blue)" }}>{user.username}</span>
                       <OwnerAvatar src={user.image_url} alt="" />
+                      <span style={{ fontSize: "1.2rem", fontWeight: "bold", color: "var(--g-blue)" }}>{user.username}</span>
                     </div>
                   ))
                 }
@@ -142,13 +160,13 @@ function ProjectList({ user }) {
                         <QRCodeListCards qrCodes={project.qr_codes} user={user} editCallback={qrCodeEditCallback} />
                       </div>
                     ) :
-                      <p style={{ marginBottom: "10px" }}>This project doesn't have any QR Codes.</p>
+                      <p>This project doesn't have any QR Codes.</p>
                   }
-                  {project.owner.id === user.id ?
+                  {project.owners.map(u => u.id).includes(user.id) ?
                     (<ProjectItemButtonGroup>
                       <ProjectItemButton onClick={() => deleteProject(project)}>Delete</ProjectItemButton>
                       <ProjectItemButton onClick={() => editProject(project)}>Edit</ProjectItemButton>
-                      <ProjectItemButton onClick={() => showAddUsers(project)}>Share</ProjectItemButton>
+                      <ProjectItemButton onClick={() => toggleShowAddUsers(project)}>Share</ProjectItemButton>
                     </ProjectItemButtonGroup>
                     ) :
                     (<ProjectItemButtonGroup>
@@ -159,7 +177,7 @@ function ProjectList({ user }) {
               </Box>) :
                 (<Box>
                   <ProjectDetails>
-                    <ProjectForm onChange={updateFormData} onSubmit={handleEditSubmit} showPreview={false} values={formData} />
+                    <ProjectForm onChange={updateFormData} onSubmit={handleEditSubmit} showPreview={false} values={formData} errors={errors} />
                     <div>
                       <ProjectItemButtonGroup>
                         <ProjectItemButton onClick={() => closeEditForm()}>Cancel</ProjectItemButton>
@@ -170,7 +188,7 @@ function ProjectList({ user }) {
                 </Box>)
               }
               {addUsersId === project.id && (
-                <ProjectAddUsersForm project={project} />
+                <ProjectAddUsersForm project={project} updateProjectCallback={updateProjectCallback} />
               )}
             </ProjectItem>
           ))
@@ -197,12 +215,15 @@ const Wrapper = styled.section`
 `;
 
 const ProjectItem = styled.div`
-& > div {
+  padding: 10px;
+  border-radius: 6px;
+  background: white;
+
+  & > div {
     display: flex;
     flex-flow: row wrap;
-    gap: 20px;
+    gap: 10px;
     justify-content: start;
-    background: white;
 
     @media only screen and (max-width: 500px) {
       justify-content: center;
@@ -224,6 +245,7 @@ const ProjectItemButton = styled.button`
 
 const ProjectDetails = styled.div`
   flex: 1 1 50%;
+  gap: 16px;
   overflow-wrap: anywhere;
   display: flex;
   flex-flow: column nowrap;

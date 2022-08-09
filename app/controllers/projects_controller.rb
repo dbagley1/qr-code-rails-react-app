@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: %i[show update destroy leave add_user]
-  before_action :set_user, only: %i[create update leave add_user]
+  before_action :set_project, only: %i[show update destroy leave add_user remove_user set_user_role]
+  before_action :set_user, only: %i[create update leave add_user remove_user set_user_role]
 
   # GET /projects
   def index
@@ -32,11 +32,11 @@ class ProjectsController < ApplicationController
 
   # PATCH/PUT /projects/1
   def update
-    if @user == @project.owner
+    if @project.owners.includes(@user)
       if @project.update(project_params)
         render json: @project
       else
-        render json: @project.errors, status: :unprocessable_entity
+        render json: { errors: @project.errors.full_messages }, status: :unprocessable_entity
       end
     end
   end
@@ -69,7 +69,7 @@ class ProjectsController < ApplicationController
   end
 
   def add_user
-    if @user == @project.owner
+    if @project.owners.includes(@user)
       new_user = User.find_by(username: params[:username])
       if new_user
         project_user = ProjectsUser.where(project_id: @project.id, user_id: new_user.id).first_or_create
@@ -79,7 +79,7 @@ class ProjectsController < ApplicationController
           render json: @project.errors, status: :unprocessable_entity
         end
       else
-        render json: { errors: ["Could not find user with username: #{params[:username]}."] }, status: 401
+        render json: { errors: ["Could not find user with username: #{params[:username]}."] }, status: 404
       end
     else
       render json: { errors: ["You must be the project owner to add collaborators."] }, status: 401
@@ -87,12 +87,51 @@ class ProjectsController < ApplicationController
   end
 
   def remove_user
-    if @user == @project.owner
-      remove_user = User.find_by(username: params[:username])
+    if @project.owners.includes(@user)
+      remove_user = User.find_by(id: params[:user_id])
       if remove_user
-        project_user = ProjectsUser.destroy_by(project_id: @project.id, user_id: remove_user.id)
-        if project_user.length > 0
-          render json: @project, status: 200
+        if remove_user.id != @user.id
+          project_user = ProjectsUser.destroy_by(project_id: @project.id, user_id: remove_user.id)
+          if project_user.length > 0
+            render json: @project, status: 200
+          else
+            render json: { errors: ["User is not a collaborator on this project."] }, status: 404
+          end
+        else
+          render json: { errors: ["You cannot remove yourself from this project because you are the owner."] }, status: :unprocessable_entity
+        end
+      else
+        render json: { errors: ["Could not find user with username: #{params[:username]}."] }, status: 404
+      end
+    else
+      render json: { errors: ["You must be the project owner to remove collaborators."] }, status: 401
+    end
+  end
+
+  def set_user_role
+    if @project.owners.includes(@user)
+      select_user = User.find_by(id: params[:user_id])
+      if select_user
+        project_user = ProjectsUser.find_by(project_id: @project.id, user_id: select_user.id)
+        if project_user
+          if params[:role] == "owner"
+            project_user.update(owner: true)
+            render json: project_user.project, status: 200
+          else
+            if project_user[:owner] == true
+              if @project.owners.length > 1
+                if project_user.update(owner: false)
+                  render json: project_user.project, status: 200
+                else
+                  render json: project_user.errors, status: :unprocessable_entity
+                end
+              else
+                render json: { errors: "A project must have at least one owner" }, status: :unprocessable_entity
+              end
+            else
+              render json: { errors: "User is not an owner on this project" }, status: :unprocessable_entity
+            end
+          end
         else
           render json: { errors: ["User is not a collaborator on this project."] }, status: 404
         end
@@ -100,7 +139,7 @@ class ProjectsController < ApplicationController
         render json: { errors: ["Could not find user with username: #{params[:username]}."] }, status: 404
       end
     else
-      render json: { errors: ["You must be the project owner to remove collaborators."] }, status: 401
+      render json: { errors: ["You must be the project owner to change collaborator roles."] }, status: 401
     end
   end
 

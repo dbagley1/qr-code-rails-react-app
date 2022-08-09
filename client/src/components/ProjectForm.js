@@ -33,6 +33,7 @@ function ProjectForm(props) {
               type="text"
               id="title"
               value={title}
+              required
               onChange={(e) => setTitle(e.target.value)}
             />
           </FieldGroup>
