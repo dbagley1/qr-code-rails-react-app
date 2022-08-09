@@ -7,11 +7,11 @@ This web application is a work-in-progress. Current features include:
 - Full CRUD capability: users can view, create, edit, and delete their QR Codes through the web application.
 - User authentication & account creation. Users must be logged in to use the application and can only access QR Codes associated with their account.
 - QR Codes can be downloaded in SVG format.
+- Grouping QR Codes using projects for campaign management.
+- Allowing users to collaborate by sharing access to projects.
 
 Features in-progress:
 
-- Grouping QR Codes using projects for campaign management.
-- Allowing users to collaborate by share access to projects through a many-to-many relationship.
 - PNG export of QR Codes.
 - Editing account details and deleting accounts.
 - Metrics and anlaytics, using short URLs and redirects to track how many people use the QR code in realtime.
