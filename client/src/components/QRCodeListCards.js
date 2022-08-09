@@ -10,6 +10,12 @@ function QRCodeListCards(props) {
   const { user } = props;
   const editCallback = props.editCallback || (() => { });
   const [qrCodes, setQrCodes] = useState(props.qrCodes);
+  const [ownedProjects, setOwnedProjects] = useState([]);
+  const [errors, setErrors] = useState([]);
+
+  useEffect(() => {
+    setOwnedProjects(user.owned_projects);
+  }, [user]);
 
   useEffect(() => {
     setQrCodes(props.qrCodes);
@@ -56,15 +62,25 @@ function QRCodeListCards(props) {
       },
       body: JSON.stringify(formData)
     })
-      .then(response => response.json())
+      .then(response =>
+        response.json())
       .then(data => {
-        setQrCodes(qrCodes.map(qrCode => qrCode.id === editId ? data : qrCode));
-        setEditId(null);
-        editCallback();
+        if (data.errors) {
+          setErrors(data.errors);
+        } else {
+          setQrCodes(qrCodes.map(qrCode => qrCode.id === editId ? data : qrCode));
+          setEditId(null);
+          setErrors([]);
+        }
+        editCallback(data);
       })
       .catch(error => {
         console.log(error);
       });
+  }
+
+  function showDelete(qrCode) {
+    return !qrCode.project || user.owned_projects.includes(qrCode.project?.id);
   }
 
   return (
@@ -72,39 +88,50 @@ function QRCodeListCards(props) {
       {qrCodes?.length ? (
         qrCodes.map((qrCode) => (
           <QRCodeItem key={qrCode.id}>
-            {editId !== qrCode.id ? (<Box>
-              <SVGContainer>
-                <QRCodeElement url={qrCode.url} color={qrCode.color} containerId={'qr-svg-' + qrCode.id} />
-              </SVGContainer>
-              <QRDetails>
-                <div>
-                  <h2>{qrCode.title}</h2>
-                  <span>{qrCode?.project?.title}</span>
-                  <p><span style={{ color: "rgb(0,0,238)" }}>{qrCode.url}</span></p>
-                  <p>{new Date(qrCode.created_at).toLocaleString('en-US', { month: "short", day: "2-digit", hour: "numeric", minute: "numeric" })}</p>
-                </div>
-                <QRItemButtonGroup>
-                  <QRItemButton onClick={() => deleteQrCode(qrCode)} style={{ color: 'red' }}>Delete</QRItemButton>
-                  <QRItemButton onClick={() => editQrCode(qrCode)}>Edit</QRItemButton>
-                  <QRCodeDownloadButtons svgSelector={'#qr-svg-' + qrCode.id + ' svg'} label={'SVG'} fileName={qrCode.title} />
-                </QRItemButtonGroup>
-              </QRDetails>
-            </Box>) :
-              (<Box>
+            {editId !== qrCode.id ? (
+              <Box>
                 <SVGContainer>
-                  <QRCodeElement url={formData.url || qrCode.url} color={formData.color || qrCode.color} title={formData.title || qrCode.title} />
+                  <QRCodeElement url={qrCode.url} color={qrCode.color} containerId={'qr-svg-' + qrCode.id} />
                 </SVGContainer>
                 <QRDetails>
-                  <QRCodeForm onChange={updateFormData} onSubmit={handleEditSubmit} showPreview={false} values={formData} user={user} />
+                  <p>Created: {new Date(qrCode.created_at).toLocaleString('en-US', { month: "short", day: "numeric" })}</p>
                   <div>
-                    <QRItemButtonGroup>
-                      <QRItemButton onClick={() => closeEditForm()}>Cancel</QRItemButton>
-                      <QRItemButton onClick={() => deleteQrCode(qrCode)} style={{ color: 'red' }}>
-                        <i className="fas fa-trash-alt" />Delete</QRItemButton>
-                    </QRItemButtonGroup>
+                    <h2>{qrCode.title}</h2>
+                    <span>{qrCode?.project && `Project: ${qrCode.project.title}`}</span>
+                    <p><span style={{ color: "rgb(0,0,238)" }}>{qrCode.url}</span></p>
                   </div>
+                  <QRItemButtonGroup>
+                    <QRCodeDownloadButtons svgSelector={'#qr-svg-' + qrCode.id + ' svg'} label={'SVG'} fileName={qrCode.title} />
+                    <QRItemButton onClick={() => editQrCode(qrCode)} style={{ color: "var(--g-blue)" }}>
+                      <i className="fas fa-pencil-alt" /> Edit
+                    </QRItemButton>
+                    {showDelete(qrCode) &&
+                      <QRItemButton onClick={() => deleteQrCode(qrCode)} style={{ color: 'red' }}>
+                        <i className="fas fa-trash-alt" /> Delete
+                      </QRItemButton>}
+                  </QRItemButtonGroup>
                 </QRDetails>
-              </Box>)
+              </Box>
+            ) :
+              (
+                <Box>
+                  <SVGContainer>
+                    <QRCodeElement url={formData.url || qrCode.url} color={formData.color || qrCode.color} title={formData.title || qrCode.title} />
+                  </SVGContainer>
+                  <QRDetails>
+                    <QRCodeForm onChange={updateFormData} onSubmit={handleEditSubmit} showPreview={false} values={formData} user={user} errors={errors} />
+                    <div>
+                      <QRItemButtonGroup>
+                        <QRItemButton onClick={() => closeEditForm()}>Cancel</QRItemButton>
+                        {showDelete(qrCode) &&
+                          <QRItemButton onClick={() => deleteQrCode(qrCode)} style={{ color: 'red' }}>
+                            <i className="fas fa-trash-alt" /> Delete
+                          </QRItemButton>}
+                      </QRItemButtonGroup>
+                    </div>
+                  </QRDetails>
+                </Box>
+              )
             }
           </QRCodeItem>
         ))
@@ -178,6 +205,11 @@ const QRItemButtonGroup = styled.div`
   display: inline-flex;
   flex-direction: row;
   gap: 10px;
+  width: 100%;
+
+  @media only screen and (max-width: 500px) {
+    justify-content: center;
+  }
 `;
 
 export default QRCodeListCards;

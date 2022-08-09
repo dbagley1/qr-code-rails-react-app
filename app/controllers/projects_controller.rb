@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: %i[show update destroy leave]
-  before_action :set_user, only: %i[create update leave]
+  before_action :set_project, only: %i[show update destroy leave add_user]
+  before_action :set_user, only: %i[create update leave add_user]
 
   # GET /projects
   def index
@@ -69,15 +69,38 @@ class ProjectsController < ApplicationController
   end
 
   def add_user
-    new_user = User.find_by(id: params[:user_id])
-    if @user && @user.id === @project.owner.id
-      @project.users << new_user
-      if @project.save
-        render json: @project, status: :created
+    if @user == @project.owner
+      new_user = User.find_by(username: params[:username])
+      if new_user
+        project_user = ProjectsUser.where(project_id: @project.id, user_id: new_user.id).first_or_create
+        if project_user.save
+          render json: @project, status: :created
+        else
+          render json: @project.errors, status: :unprocessable_entity
+        end
       else
-        render json: @project.errors, status: :unprocessable_entity
+        render json: { errors: ["Could not find user with username: #{params[:username]}."] }, status: 401
       end
-      render json: { errors: ["You must be the owner to add project collaborators."] }, status: 401
+    else
+      render json: { errors: ["You must be the project owner to add collaborators."] }, status: 401
+    end
+  end
+
+  def remove_user
+    if @user == @project.owner
+      remove_user = User.find_by(username: params[:username])
+      if remove_user
+        project_user = ProjectsUser.destroy_by(project_id: @project.id, user_id: remove_user.id)
+        if project_user.length > 0
+          render json: @project, status: 200
+        else
+          render json: { errors: ["User is not a collaborator on this project."] }, status: 404
+        end
+      else
+        render json: { errors: ["Could not find user with username: #{params[:username]}."] }, status: 404
+      end
+    else
+      render json: { errors: ["You must be the project owner to remove collaborators."] }, status: 401
     end
   end
 

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Box, Button } from "../styles";
 import ProjectForm from "../components/ProjectForm";
 import QRCodeListCards from "../components/QRCodeListCards";
+import ProjectAddUsersForm from "../components/ProjectAddUsersForm";
 
 function ProjectList({ user }) {
   const [projects, setProjects] = useState([]);
@@ -11,6 +12,7 @@ function ProjectList({ user }) {
   const [formData, setFormData] = useState({});
   const [reload, setReload] = useState(false);
   const [expandProjects, setExpandProjects] = useState([]);
+  const [addUsersId, setAddUsersId] = useState(null);
 
   function deleteProject(project) {
     const { id, title } = project;
@@ -69,10 +71,12 @@ function ProjectList({ user }) {
     setFormData({});
   }
 
-  function qrCodeEditCallback() {
-    setEditId(null);
-    setFormData({});
-    setReload(true);
+  function qrCodeEditCallback(data) {
+    if (!data.errors) {
+      setEditId(null);
+      setFormData({});
+      setReload(true);
+    }
   }
 
   function leaveProject({ id, title }) {
@@ -91,6 +95,10 @@ function ProjectList({ user }) {
     setExpandProjects(expandProjects.includes(id) ? expandProjects.filter(project => project !== id) : [...expandProjects, id]);
   }
 
+  function showAddUsers(project) {
+    setAddUsersId(project.id);
+  }
+
   return (
     <Background>
       <Wrapper>
@@ -102,6 +110,16 @@ function ProjectList({ user }) {
         {projects?.length ? (
           projects.map((project) => (
             <ProjectItem key={project.id}>
+              <div>
+                {
+                  project.users.map(user => (
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <span style={{ fontSize: "1.2rem", fontWeight: "bold", color: "var(--g-blue)" }}>{user.username}</span>
+                      <OwnerAvatar src={user.image_url} alt="" />
+                    </div>
+                  ))
+                }
+              </div>
               {editId !== project.id ? (<Box>
                 <ProjectDetails>
                   <div>
@@ -114,10 +132,6 @@ function ProjectList({ user }) {
                         ) :
                           ''
                         } {project.title}</h2>
-                        <div>
-                          <OwnerAvatar src={project.owner?.image_url} alt="" />
-                          <span style={{ fontSize: "1.2rem", fontWeight: "bold", color: "var(--g-blue)" }}>{project?.owner?.username}</span>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -128,12 +142,13 @@ function ProjectList({ user }) {
                         <QRCodeListCards qrCodes={project.qr_codes} user={user} editCallback={qrCodeEditCallback} />
                       </div>
                     ) :
-                      <p>This project doesn't have any QR Codes yet.</p>
+                      <p style={{ marginBottom: "10px" }}>This project doesn't have any QR Codes.</p>
                   }
                   {project.owner.id === user.id ?
                     (<ProjectItemButtonGroup>
                       <ProjectItemButton onClick={() => deleteProject(project)}>Delete</ProjectItemButton>
                       <ProjectItemButton onClick={() => editProject(project)}>Edit</ProjectItemButton>
+                      <ProjectItemButton onClick={() => showAddUsers(project)}>Share</ProjectItemButton>
                     </ProjectItemButtonGroup>
                     ) :
                     (<ProjectItemButtonGroup>
@@ -154,6 +169,9 @@ function ProjectList({ user }) {
                   </ProjectDetails>
                 </Box>)
               }
+              {addUsersId === project.id && (
+                <ProjectAddUsersForm project={project} />
+              )}
             </ProjectItem>
           ))
         ) : (
@@ -182,7 +200,6 @@ const ProjectItem = styled.div`
 & > div {
     display: flex;
     flex-flow: row wrap;
-    padding: 15px;
     gap: 20px;
     justify-content: start;
     background: white;
