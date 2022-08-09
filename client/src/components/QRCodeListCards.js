@@ -95,11 +95,11 @@ function QRCodeListCards(props) {
                   <QRCodeElement url={qrCode.url} color={qrCode.color} containerId={'qr-svg-' + qrCode.id} />
                 </SVGContainer>
                 <QRDetails>
-                  <p>Created: {new Date(qrCode.created_at).toLocaleString('en-US', { month: "short", day: "numeric", year: "numeric" })}</p>
+                  {/* <p>Created: {new Date(qrCode.created_at).toLocaleString('en-US', { month: "short", day: "numeric", year: "numeric" })}</p> */}
                   <div>
-                    <h2>{qrCode.title}</h2>
+                    <h2 style={{ fontWeight: "500" }}>{qrCode.title}</h2>
                     <span>{qrCode?.project && `Project: ${qrCode.project.title}`}</span>
-                    <p><span style={{ color: "rgb(0,0,238)" }}>{qrCode.url}</span></p>
+                    <p><span style={{ color: "var(--g-blue)" }}>{qrCode.url}</span></p>
                   </div>
                   <QRItemButtonGroup>
                     <QRCodeDownloadButtons svgSelector={'#qr-svg-' + qrCode.id + ' svg'} label={'SVG'} fileName={qrCode.title} />
@@ -154,7 +154,7 @@ const QRCodeItem = styled.div`
     display: flex;
     flex-flow: row wrap;
     padding: 15px;
-    gap: 20px;
+    gap: 15px;
     justify-content: start;
     background: white;
 

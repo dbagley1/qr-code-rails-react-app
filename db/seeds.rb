@@ -22,14 +22,28 @@ end
 user = User.first
 user2 = User.second
 
-domains = 10.times.map { Faker::Internet.domain_name }
+domains = %w[
+  SCF.edu/Training
+  SCF.edu/Bootcamps
+  SCF.edu/CollegeEnglish
+  SCF.edu/HealthCareerFair
+  SCF.edu/ComputerClasses
+  SCF.edu/WorkforceDevelopment
+  SCF.edu/Coding
+  SCF.edu/CodingCamps
+  SCF.edu/Certifications
+  SCF.edu/LifelongLearning
+]
+
+projectNames = ["Coding Academy", "Summer Camps 2022"]
+
 qr_count.times { |i| qr_code = user.qr_codes.create(title: "#{domains[i]}", url: "http://#{domains[i]}") }
 
-proj = user.projects.create(title: Faker::Marketing.buzzwords.titleize)
+proj = user.projects.create(title: projectNames[0])
 proj.qr_codes << user.qr_codes.slice(qr_count - 2, qr_count - 1)
 
 qr_count.times { |i| qr_code = user2.qr_codes.create(title: "#{domains[qr_count + i]}", url: "http://#{domains[qr_count + i]}") }
 
-proj2 = user2.projects.create(title: Faker::Marketing.buzzwords.titleize)
+proj2 = user2.projects.create(title: projectNames[1])
 proj2.qr_codes << user2.qr_codes.slice(0, 2)
 proj2.users << user
