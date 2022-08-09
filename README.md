@@ -1,3 +1,7 @@
+#QReate - QR Code Manager
+
+Generate, store, and share QR codes to keep track of your marketing campaigns and collaborate with others.
+
 This web application is a QR Code generator that allows users to create QR Codes and save them online for marketing campaign management. The backend API & database are powered by Ruby on Rails and the frontend is powered by React.
 
 This web application is a work-in-progress. Current features include:
@@ -9,9 +13,13 @@ This web application is a work-in-progress. Current features include:
 - QR Codes can be downloaded in SVG format.
 - Grouping QR Codes using projects for campaign management.
 - Allowing users to collaborate by sharing access to projects.
+- Editing account details.
 
 Features in-progress:
 
+- Deleting accounts.
 - PNG export of QR Codes.
-- Editing account details and deleting accounts.
+
+Future Goals:
+
 - Metrics and anlaytics, using short URLs and redirects to track how many people use the QR code in realtime.
